@@ -1,5 +1,9 @@
 $ErrorActionPreference = "Stop"
 
+param(
+  [switch]$RequireShared
+)
+
 function Write-Step($message) {
   Write-Host ""
   Write-Host "==> $message" -ForegroundColor Cyan
@@ -7,6 +11,27 @@ function Write-Step($message) {
 
 function Test-Command($name) {
   return [bool](Get-Command $name -ErrorAction SilentlyContinue)
+}
+
+function Normalize-ApiUrl($value) {
+  $url = ([string]$value).Trim().TrimEnd("/")
+  if (-not $url) {
+    return ""
+  }
+  if ($url -notmatch "/api$") {
+    $url = "$url/api"
+  }
+  return $url
+}
+
+function Test-ApiUrl($apiUrl) {
+  try {
+    $healthUrl = "$($apiUrl.TrimEnd('/'))/health"
+    $response = Invoke-RestMethod -Uri $healthUrl -TimeoutSec 8
+    return $response.status -eq "ok"
+  } catch {
+    return $false
+  }
 }
 
 $root = Resolve-Path (Join-Path $PSScriptRoot "..")
@@ -44,12 +69,31 @@ $sharedApiUrl = ""
 if (Test-Path $configPath) {
   $config = Get-Content -Raw $configPath | ConvertFrom-Json
   if ($config.apiUrl) {
-    $sharedApiUrl = [string]$config.apiUrl
+    $sharedApiUrl = Normalize-ApiUrl $config.apiUrl
   }
+}
+
+if ($RequireShared -and -not $sharedApiUrl) {
+  Write-Step "Shared data setup"
+  Write-Host "Paste the shared backend URL once. Example: https://crm-mini-demo.onrender.com/api"
+  Write-Host "After this, the launcher will remember it in crm-mini.config.json."
+  $sharedApiUrl = Normalize-ApiUrl (Read-Host "Shared API URL")
+
+  if (-not $sharedApiUrl) {
+    Write-Host "Shared API URL is required for synced mode." -ForegroundColor Red
+    exit 1
+  }
+
+  @{ apiUrl = $sharedApiUrl } | ConvertTo-Json | Set-Content -Path $configPath -Encoding UTF8
 }
 
 if ($sharedApiUrl) {
   Write-Step "Using shared API"
+  if (-not (Test-ApiUrl $sharedApiUrl)) {
+    Write-Host "Could not reach shared API: $sharedApiUrl" -ForegroundColor Red
+    Write-Host "Please check that the backend is online and the URL ends with /api."
+    exit 1
+  }
   "VITE_API_URL=$sharedApiUrl" | Set-Content -Path $clientEnvPath -Encoding UTF8
   Write-Host "Frontend will use: $sharedApiUrl"
 } elseif (Test-Path $clientEnvPath) {

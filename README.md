@@ -40,21 +40,33 @@ File nay se tu:
 
 Neu moi may chay local rieng thi moi may se co database rieng. Muon dong bo du lieu, can co 1 backend/database chung dang chay online, sau do cac may khac tro frontend ve backend chung do.
 
-Tren may nguoi dung, tao file `crm-mini.config.json` tu file mau `crm-mini.config.example.json`:
+### May chay du lieu chung
 
-```json
-{
-  "apiUrl": "https://your-shared-backend.example.com/api"
-}
-```
-
-Sau do bam lai:
+Tren may/server chay backend chung, bam:
 
 ```text
-start-crm-mini.bat
+start-shared-backend.bat
 ```
 
-Khi co `apiUrl`, launcher se chay che do dong bo:
+Backend chung se dung 1 database SQLite tai `server/prisma/dev.db`. De nguoi o xa dung duoc, backend nay can duoc deploy online bang Render/Railway/VPS hoac expose qua domain/tunnel.
+
+### May nguoi dung dong bo du lieu
+
+Neu da co URL backend chung, nguoi dung bam:
+
+```text
+start-crm-mini-synced.bat
+```
+
+Lan dau launcher se hoi URL backend chung, vi du:
+
+```text
+https://your-shared-backend.example.com/api
+```
+
+Sau khi nhap 1 lan, launcher se luu vao `crm-mini.config.json`. Cac lan sau chi can bam `start-crm-mini-synced.bat`, khong can thao tac them.
+
+Khi co backend chung, launcher se chay che do dong bo:
 
 - Khong tao database local moi.
 - Khong chay backend local.
