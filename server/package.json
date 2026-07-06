@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "seed": "prisma db execute --file prisma/init.sql --schema prisma/schema.prisma && prisma generate && node prisma/seed.js"
+    "seed": "prisma db execute --file prisma/init.sql --schema prisma/schema.prisma && prisma generate && node prisma/seed.js",
+    "generate:railway": "prisma generate --schema prisma/schema.railway.prisma",
+    "start:railway": "prisma db push --schema prisma/schema.railway.prisma && prisma generate --schema prisma/schema.railway.prisma && node prisma/seed-production.js && node src/index.js"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

@@ -75,6 +75,45 @@ Khi co backend chung, launcher se chay che do dong bo:
 
 Voi du an thu nghiem, cach de trien khai backend chung co the la Render/Railway/VPS hoac 1 may tinh bat 24/7 co domain/tunnel. Chi can backend chung co URL dang `https://.../api` la cac may khac dung chung duoc.
 
+## Deploy backend chung len Railway
+
+Repo da co san cau hinh Railway:
+
+- `railway.json`: lenh build/start backend.
+- `server/prisma/schema.railway.prisma`: schema PostgreSQL cho Railway.
+- `server/prisma/seed-production.js`: tu tao tai khoan demo lan dau, khong xoa du lieu khi redeploy.
+
+Cach deploy:
+
+1. Vao Railway va tao project moi tu repo GitHub `Hai1454/CRM-Mini-M`.
+2. Them PostgreSQL database trong project Railway.
+3. Tao service backend tu repo nay.
+4. Dat bien moi truong cho service backend:
+
+```text
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+JWT_SECRET=crm-mini-change-this-secret
+HOST=0.0.0.0
+```
+
+5. Deploy service backend.
+6. Mo public domain cho backend service.
+7. Kiem tra URL:
+
+```text
+https://your-railway-backend.up.railway.app/api/health
+```
+
+Neu tra ve `{"status":"ok","app":"CRM Mini API"}` la backend chung da san sang.
+
+Sau do dua URL backend cho launcher dong bo:
+
+```text
+https://your-railway-backend.up.railway.app/api
+```
+
+Khi minh co URL backend Railway cuoi cung, minh co the gan san vao launcher de nguoi dung chi can bam `start-crm-mini-synced.bat`, khong can nhap gi.
+
 Neu muon chay bang terminal, dung:
 
 ```bash

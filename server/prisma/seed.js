@@ -239,13 +239,18 @@ async function main() {
   });
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-    console.log("Seed data created.");
-  })
-  .catch(async (error) => {
-    console.error(error);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+if (require.main === module) {
+  main()
+    .then(async () => {
+      await prisma.$disconnect();
+      console.log("Seed data created.");
+    })
+    .catch(async (error) => {
+      console.error(error);
+      await prisma.$disconnect();
+      process.exit(1);
+    });
+}
+
+module.exports = main;
+module.exports.disconnect = () => prisma.$disconnect();
