@@ -52,19 +52,19 @@ Backend chung se dung 1 database SQLite tai `server/prisma/dev.db`. De nguoi o x
 
 ### May nguoi dung dong bo du lieu
 
-Neu da co URL backend chung, nguoi dung bam:
+Backend Railway chung dang duoc cau hinh san:
+
+```text
+https://profound-elegance-production-2d5e.up.railway.app/api
+```
+
+Nguoi dung chi can bam:
 
 ```text
 start-crm-mini-synced.bat
 ```
 
-Lan dau launcher se hoi URL backend chung, vi du:
-
-```text
-https://your-shared-backend.example.com/api
-```
-
-Sau khi nhap 1 lan, launcher se luu vao `crm-mini.config.json`. Cac lan sau chi can bam `start-crm-mini-synced.bat`, khong can thao tac them.
+Launcher se tu luu URL backend chung vao `crm-mini.config.json`. Cac lan sau chi can bam `start-crm-mini-synced.bat`, khong can thao tac them.
 
 Khi co backend chung, launcher se chay che do dong bo:
 
