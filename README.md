@@ -94,6 +94,7 @@ Cach deploy:
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 JWT_SECRET=crm-mini-change-this-secret
 HOST=0.0.0.0
+CORS_ORIGINS=*
 ```
 
 5. Deploy service backend.

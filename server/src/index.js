@@ -32,9 +32,11 @@ app.use(cors({
   origin(origin, callback) {
     if (!origin) return callback(null, true);
     const allowedOrigins = configuredOrigins.length ? configuredOrigins : defaultOrigins;
-    const isAllowed = allowedOrigins.some((allowed) => (
-      allowed instanceof RegExp ? allowed.test(origin) : allowed === origin
-    ));
+    const isAllowed = configuredOrigins.length
+      ? allowedOrigins.some((allowed) => allowed === "*" || allowed === origin)
+      : allowedOrigins.some((allowed) => (
+        allowed instanceof RegExp ? allowed.test(origin) : allowed === origin
+      ));
     callback(isAllowed ? null : new Error("Not allowed by CORS"), isAllowed);
   }
 }));
