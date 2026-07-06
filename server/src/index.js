@@ -15,8 +15,29 @@ const userRoutes = require("./routes/users.routes");
 
 const app = express();
 const port = process.env.PORT || 4000;
+const host = process.env.HOST || "0.0.0.0";
+const configuredOrigins = (process.env.CORS_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const defaultOrigins = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  /^http:\/\/10\.\d{1,3}\.\d{1,3}\.\d{1,3}:5173$/,
+  /^http:\/\/172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}:5173$/,
+  /^http:\/\/192\.168\.\d{1,3}\.\d{1,3}:5173$/
+];
 
-app.use(cors({ origin: ["http://localhost:5173", "http://127.0.0.1:5173"] }));
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin) return callback(null, true);
+    const allowedOrigins = configuredOrigins.length ? configuredOrigins : defaultOrigins;
+    const isAllowed = allowedOrigins.some((allowed) => (
+      allowed instanceof RegExp ? allowed.test(origin) : allowed === origin
+    ));
+    callback(isAllowed ? null : new Error("Not allowed by CORS"), isAllowed);
+  }
+}));
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => {
@@ -41,6 +62,6 @@ app.use((error, _req, res, _next) => {
   res.status(500).json({ message: "Server error." });
 });
 
-app.listen(port, () => {
-  console.log(`CRM Mini API running at http://localhost:${port}`);
+app.listen(port, host, () => {
+  console.log(`CRM Mini API running at http://${host}:${port}`);
 });

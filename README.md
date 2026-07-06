@@ -40,6 +40,38 @@ Frontend: http://localhost:5173
 
 Backend: http://localhost:4000
 
+## Truy cap tu may khac trong cung mang LAN
+
+Ung dung da cau hinh de listen tren tat ca dia chi mang cua may chay server.
+
+1. Tren may dang chay ung dung, lay dia chi IPv4 LAN:
+
+```bash
+ipconfig
+```
+
+Vi du IPv4 la `192.168.1.20`.
+
+2. May khac trong cung Wi-Fi/LAN truy cap:
+
+```text
+http://192.168.1.20:5173
+```
+
+Frontend se tu goi backend theo cung IP:
+
+```text
+http://192.168.1.20:4000/api
+```
+
+Neu van khong vao duoc, cho phep firewall cua Windows mo port `5173` va `4000` cho Node.js.
+
+Co the gan API rieng bang bien moi truong frontend:
+
+```bash
+VITE_API_URL=http://192.168.1.20:4000/api
+```
+
 ## Tai khoan demo
 
 - Email: `admin@crm.local`
