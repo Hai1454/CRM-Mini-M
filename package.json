@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "install:all": "pnpm install",
+    "setup": "pnpm install && node scripts/prepare-demo.js && pnpm run seed",
     "dev": "concurrently \"pnpm --filter crm-mini-server run dev\" \"pnpm --filter crm-mini-client run dev\"",
     "seed": "pnpm --filter crm-mini-server run seed"
   },

@@ -16,7 +16,42 @@ Ung dung CRM Mini phuc vu do an thiet ke va phat trien phan mem chuyen nganh die
 - Backend Express + Prisma.
 - Frontend React + Vite + Bootstrap.
 
-## Cach chay
+## Cach chay tren may moi
+
+Moi nguoi chi can clone/tai source ve may minh, cai Node.js, roi chay:
+
+```bash
+pnpm run setup
+```
+
+Lenh nay se:
+
+- Cai dependency.
+- Tu tao `server/.env` neu chua co.
+- Tao database SQLite local.
+- Nap du lieu mau.
+
+Sau do chay ung dung:
+
+```bash
+pnpm run dev
+```
+
+Mo trinh duyet tai:
+
+```text
+http://localhost:5173
+```
+
+Backend chay tai:
+
+```text
+http://localhost:4000
+```
+
+Moi may se co database demo rieng nam trong `server/prisma/dev.db`, nen khong can ket noi cung LAN va khong can truy cap may cua nhau.
+
+## Cach chay thu cong
 
 1. Cai dependency:
 
@@ -39,38 +74,6 @@ pnpm run dev
 Frontend: http://localhost:5173
 
 Backend: http://localhost:4000
-
-## Truy cap tu may khac trong cung mang LAN
-
-Ung dung da cau hinh de listen tren tat ca dia chi mang cua may chay server.
-
-1. Tren may dang chay ung dung, lay dia chi IPv4 LAN:
-
-```bash
-ipconfig
-```
-
-Vi du IPv4 la `192.168.1.20`.
-
-2. May khac trong cung Wi-Fi/LAN truy cap:
-
-```text
-http://192.168.1.20:5173
-```
-
-Frontend se tu goi backend theo cung IP:
-
-```text
-http://192.168.1.20:4000/api
-```
-
-Neu van khong vao duoc, cho phep firewall cua Windows mo port `5173` va `4000` cho Node.js.
-
-Co the gan API rieng bang bien moi truong frontend:
-
-```bash
-VITE_API_URL=http://192.168.1.20:4000/api
-```
 
 ## Tai khoan demo
 
