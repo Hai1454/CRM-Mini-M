@@ -1,0 +1,12 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// MySQL production target for the CRM Mini report.
+// The running demo uses prisma/schema.prisma with SQLite so it can run locally without MySQL.
+// Use server/docs/mysql-schema.sql for the exact database tables required in the report.

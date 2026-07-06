@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma-runtime"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int               @id @default(autoincrement())
+  username         String?           @unique
+  name             String
+  email            String            @unique
+  password         String
+  role             String            @default("STAFF")
+  phone            String?
+  title            String?
+  status           String            @default("ACTIVE")
+  createdCustomers Customer[]         @relation("CustomerCreator")
+  managedCustomers CustomerManager[]
+  orders           Order[]
+  careHistory      CareHistory[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model Customer {
+  id        Int               @id @default(autoincrement())
+  name      String
+  company   String
+  email     String            @unique
+  phone     String
+  address   String?
+  customerType String          @default("Potential")
+  source    String            @default("Website")
+  status    String            @default("Lead")
+  note      String?
+  createdById Int?
+  createdBy User?             @relation("CustomerCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  managers  CustomerManager[]
+  orders    Order[]
+  careHistory CareHistory[]
+  deals     Deal[]
+  tickets   Ticket[]
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  sku         String   @unique
+  category    String
+  price       Int
+  status      String   @default("Active")
+  description String?
+  orders      Order[]
+  orderDetails OrderDetail[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id         Int      @id @default(autoincrement())
+  code       String   @unique
+  customerId Int
+  productId  Int
+  staffId    Int?
+  quantity   Int      @default(1)
+  total      Int
+  paymentStatus String @default("Unpaid")
+  status     String   @default("Draft")
+  note       String?
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  staff      User?    @relation(fields: [staffId], references: [id], onDelete: SetNull)
+  details    OrderDetail[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model CareHistory {
+  id         Int      @id @default(autoincrement())
+  customerId Int
+  staffId    Int?
+  type       String   @default("Call")
+  summary    String
+  result     String?
+  nextAction String?
+  nextSchedule DateTime?
+  careDate   DateTime @default(now())
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  staff      User?    @relation(fields: [staffId], references: [id], onDelete: SetNull)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model OrderDetail {
+  id         Int      @id @default(autoincrement())
+  orderId    Int
+  productId  Int
+  quantity   Int      @default(1)
+  unitPrice  Int
+  totalPrice Int
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model CustomerManager {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  customerId Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, customerId])
+}
+
+model Deal {
+  id         Int      @id @default(autoincrement())
+  title      String
+  value      Int
+  stage      String   @default("New")
+  expectedAt DateTime?
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Ticket {
+  id         Int      @id @default(autoincrement())
+  subject    String
+  priority   String   @default("Medium")
+  status     String   @default("Open")
+  description String?
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
