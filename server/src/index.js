@@ -12,6 +12,7 @@ const orderRoutes = require("./routes/orders.routes");
 const productRoutes = require("./routes/products.routes");
 const ticketRoutes = require("./routes/tickets.routes");
 const userRoutes = require("./routes/users.routes");
+const { ensureDefaultAdmin } = require("./utils/bootstrap");
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -64,6 +65,12 @@ app.use((error, _req, res, _next) => {
   res.status(500).json({ message: "Server error." });
 });
 
-app.listen(port, host, () => {
-  console.log(`CRM Mini API running at http://${host}:${port}`);
-});
+ensureDefaultAdmin()
+  .catch((error) => {
+    console.error("Unable to bootstrap default admin account.", error);
+  })
+  .finally(() => {
+    app.listen(port, host, () => {
+      console.log(`CRM Mini API running at http://${host}:${port}`);
+    });
+  });

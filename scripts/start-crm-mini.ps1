@@ -95,8 +95,9 @@ if ($sharedApiUrl) {
   }
   "VITE_API_URL=$sharedApiUrl" | Set-Content -Path $clientEnvPath -Encoding UTF8
   Write-Host "Frontend will use: $sharedApiUrl"
-} elseif (Test-Path $clientEnvPath) {
-  Remove-Item -LiteralPath $clientEnvPath -Force
+} else {
+  "VITE_API_URL=http://localhost:4000/api" | Set-Content -Path $clientEnvPath -Encoding UTF8
+  Write-Host "Frontend will use local API: http://localhost:4000/api"
 }
 
 $needsInstall = -not (Test-Path (Join-Path $root "node_modules"))
