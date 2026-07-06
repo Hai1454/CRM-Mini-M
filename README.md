@@ -18,7 +18,25 @@ Ung dung CRM Mini phuc vu do an thiet ke va phat trien phan mem chuyen nganh die
 
 ## Cach chay tren may moi
 
-Moi nguoi chi can clone/tai source ve may minh, cai Node.js, roi chay:
+Moi nguoi chi can clone/tai source ve may minh va cai Node.js LTS.
+
+Tren Windows, bam dup file:
+
+```text
+start-crm-mini.bat
+```
+
+File nay se tu:
+
+- Chuan bi pnpm neu may chua co.
+- Cai dependency neu chua co.
+- Tu tao `server/.env` neu chua co.
+- Tao database SQLite local neu chua co.
+- Nap du lieu mau.
+- Khoi dong frontend/backend.
+- Mo trinh duyet tai `http://localhost:5173`.
+
+Neu muon chay bang terminal, dung:
 
 ```bash
 pnpm run setup
