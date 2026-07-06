@@ -14,6 +14,18 @@ function Test-Command($name) {
   return [bool](Get-Command $name -ErrorAction SilentlyContinue)
 }
 
+function Invoke-Pnpm($Arguments) {
+  if ($script:PnpmMode -eq "global") {
+    & pnpm @Arguments
+  } else {
+    & npm exec --yes pnpm@11.7.0 -- @Arguments
+  }
+
+  if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+  }
+}
+
 function Normalize-ApiUrl($value) {
   $url = ([string]$value).Trim().TrimEnd("/")
   if (-not $url) {
@@ -57,17 +69,21 @@ if (-not (Test-Command "node")) {
 $nodeVersion = node --version
 Write-Host "Node.js: $nodeVersion"
 
-if (-not (Test-Command "pnpm")) {
-  Write-Step "Preparing pnpm"
-  if (Test-Command "corepack") {
-    corepack enable
-    corepack prepare pnpm@latest --activate
-  } else {
-    npm install -g pnpm
+if (Test-Command "pnpm") {
+  $script:PnpmMode = "global"
+  Write-Host "pnpm: $(pnpm --version)"
+} else {
+  if (-not (Test-Command "npm")) {
+    Write-Host ""
+    Write-Host "npm is not installed or is not available in PATH." -ForegroundColor Red
+    Write-Host "Install Node.js LTS with npm enabled, then run this launcher again."
+    exit 1
   }
-}
 
-Write-Host "pnpm: $(pnpm --version)"
+  $script:PnpmMode = "npm-exec"
+  Write-Step "Preparing pnpm without admin permission"
+  Invoke-Pnpm @("--version")
+}
 
 $configPath = Join-Path $root "crm-mini.config.json"
 $clientEnvPath = Join-Path $root "client\.env.local"
@@ -108,7 +124,7 @@ node scripts/prepare-demo.js
 
 if ($needsInstall) {
   Write-Step "Installing dependencies"
-  pnpm install
+  Invoke-Pnpm @("install")
 } else {
   Write-Host "Dependencies already installed."
 }
@@ -117,7 +133,7 @@ if ($sharedApiUrl) {
   Write-Host "Shared API mode: skipping local database setup."
 } elseif ($needsSeed) {
   Write-Step "Creating local demo database"
-  pnpm run seed
+  Invoke-Pnpm @("run", "seed")
 } else {
   Write-Host "Local demo database already exists."
 }
@@ -128,7 +144,7 @@ Write-Host "Keep this window open while using the app."
 Start-Process "http://localhost:5173"
 
 if ($sharedApiUrl) {
-  pnpm --filter crm-mini-client run dev
+  Invoke-Pnpm @("--filter", "crm-mini-client", "run", "dev")
 } else {
-  pnpm run dev
+  Invoke-Pnpm @("run", "dev")
 }
