@@ -37,6 +37,25 @@ if (-not (Test-Command "pnpm")) {
 
 Write-Host "pnpm: $(pnpm --version)"
 
+$configPath = Join-Path $root "crm-mini.config.json"
+$clientEnvPath = Join-Path $root "client\.env.local"
+$sharedApiUrl = ""
+
+if (Test-Path $configPath) {
+  $config = Get-Content -Raw $configPath | ConvertFrom-Json
+  if ($config.apiUrl) {
+    $sharedApiUrl = [string]$config.apiUrl
+  }
+}
+
+if ($sharedApiUrl) {
+  Write-Step "Using shared API"
+  "VITE_API_URL=$sharedApiUrl" | Set-Content -Path $clientEnvPath -Encoding UTF8
+  Write-Host "Frontend will use: $sharedApiUrl"
+} elseif (Test-Path $clientEnvPath) {
+  Remove-Item -LiteralPath $clientEnvPath -Force
+}
+
 $needsInstall = -not (Test-Path (Join-Path $root "node_modules"))
 $needsSeed = -not (Test-Path (Join-Path $root "server\prisma\dev.db"))
 
@@ -50,7 +69,9 @@ if ($needsInstall) {
   Write-Host "Dependencies already installed."
 }
 
-if ($needsSeed) {
+if ($sharedApiUrl) {
+  Write-Host "Shared API mode: skipping local database setup."
+} elseif ($needsSeed) {
   Write-Step "Creating local demo database"
   pnpm run seed
 } else {
@@ -62,4 +83,8 @@ Write-Host "The app will open at http://localhost:5173"
 Write-Host "Keep this window open while using the app."
 Start-Process "http://localhost:5173"
 
-pnpm run dev
+if ($sharedApiUrl) {
+  pnpm --filter crm-mini-client run dev
+} else {
+  pnpm run dev
+}

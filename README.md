@@ -36,6 +36,33 @@ File nay se tu:
 - Khoi dong frontend/backend.
 - Mo trinh duyet tai `http://localhost:5173`.
 
+## Dong bo du lieu giua cac may
+
+Neu moi may chay local rieng thi moi may se co database rieng. Muon dong bo du lieu, can co 1 backend/database chung dang chay online, sau do cac may khac tro frontend ve backend chung do.
+
+Tren may nguoi dung, tao file `crm-mini.config.json` tu file mau `crm-mini.config.example.json`:
+
+```json
+{
+  "apiUrl": "https://your-shared-backend.example.com/api"
+}
+```
+
+Sau do bam lai:
+
+```text
+start-crm-mini.bat
+```
+
+Khi co `apiUrl`, launcher se chay che do dong bo:
+
+- Khong tao database local moi.
+- Khong chay backend local.
+- Chi chay frontend.
+- Tat ca du lieu se doc/ghi vao backend chung.
+
+Voi du an thu nghiem, cach de trien khai backend chung co the la Render/Railway/VPS hoac 1 may tinh bat 24/7 co domain/tunnel. Chi can backend chung co URL dang `https://.../api` la cac may khac dung chung duoc.
+
 Neu muon chay bang terminal, dung:
 
 ```bash

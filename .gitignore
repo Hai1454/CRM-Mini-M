@@ -5,6 +5,8 @@ dist/
 .agents/
 .codex/
 crm-mini-source.zip
+crm-mini.config.json
+client/.env.local
 server/prisma/dev.db
 server/prisma/dev.db-journal
 server/src/generated/
