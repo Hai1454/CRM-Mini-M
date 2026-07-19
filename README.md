@@ -7,4 +7,4 @@ B3: Chay start-crm-mini-main bang quyen admin
 Tai khoan admin:
 Day la tai khoan demo.
 Email: admin@crm.local
-Mat khau: xem trong file server/prisma/seed.js
+Mat khau: 123456
